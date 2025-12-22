@@ -1,0 +1,217 @@
+.trending-section {
+  padding: 120px 24px;
+  background: var(--bg-secondary);
+}
+
+.trending-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-tag svg {
+  color: var(--accent-red);
+  animation: flame 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes flame {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+/* Meme Table */
+.meme-table-container {
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 48px;
+}
+
+.meme-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.meme-table th {
+  text-align: left;
+  padding: 20px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--bg-tertiary);
+}
+
+.meme-table td {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.2s ease;
+}
+
+.meme-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.meme-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Rank Cell */
+.rank-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.fire-icon {
+  color: var(--accent-red);
+}
+
+/* Meme Cell */
+.meme-cell {
+  min-width: 200px;
+}
+
+.meme-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.meme-emoji-small {
+  font-size: 32px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+}
+
+.meme-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.meme-ticker-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+}
+
+.meme-full-name {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Price Cell */
+.price-cell {
+  font-family: var(--font-display);
+}
+
+.price-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.price-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+/* Change Cell */
+.change-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.change-cell.positive {
+  color: var(--accent-green);
+}
+
+.change-cell.negative {
+  color: var(--accent-red);
+}
+
+/* Volume & Holders */
+.volume-cell,
+.holders-cell {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Action Cell */
+.action-cell {
+  text-align: right;
+}
+
+.btn-trade {
+  padding: 10px 24px;
+  background: transparent;
+  border: 1px solid var(--accent-green);
+  color: var(--accent-green);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-trade:hover {
+  background: var(--accent-green);
+  color: var(--bg-primary);
+}
+
+/* View All */
+.view-all-container {
+  text-align: center;
+  margin-top: 32px;
+}
+
+.btn-view-all {
+  padding: 14px 32px;
+  background: var(--bg-tertiary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-view-all:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .meme-table-container {
+    overflow-x: auto;
+  }
+
+  .meme-table {
+    min-width: 800px;
+  }
+}
+
+@media (max-width: 640px) {
+  .trending-section {
+    padding: 80px 24px;
+  }
+}

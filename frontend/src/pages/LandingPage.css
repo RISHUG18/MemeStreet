@@ -1,0 +1,32 @@
+.landing-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+.ticker-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+}
+
+/* Adjust navbar position due to ticker */
+.landing-page .navbar {
+  top: 48px;
+}
+
+/* Adjust hero padding due to fixed elements */
+.landing-page .hero {
+  padding-top: 180px;
+}
+
+/* Smooth scroll behavior for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Section spacing consistency */
+section {
+  scroll-margin-top: 120px;
+}
