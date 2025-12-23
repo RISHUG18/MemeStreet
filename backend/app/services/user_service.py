@@ -61,9 +61,10 @@ async def create_user(user_data: UserCreate) -> dict:
         "username": user_data.username.lower(),
         "email": user_data.email.lower(),
         "hashed_password": get_password_hash(user_data.password),  # 🔐 HASH THE PASSWORD!
-        "wallet_balance": 100.0,  # Starting balance
+        "wallet_balance": 10000.0,  # Starting balance
         "street_cred": 0,
         "portfolio": [],
+        "total_trades": 0,
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow(),
     }

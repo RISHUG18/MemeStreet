@@ -85,6 +85,26 @@
   width: 100%;
 }
 
+/* Primary Nav Link - Trade Memes */
+.nav-link-primary {
+  color: #22c55e;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.nav-link-primary:hover {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.nav-link-primary::after {
+  display: none;
+}
+
 .navbar-actions {
   display: flex;
   align-items: center;

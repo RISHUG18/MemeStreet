@@ -3,7 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.database import connect_to_mongo, close_mongo_connection
-from app.routes import auth_router
+from app.routes import auth_router, memes_router, trading_router
+from app.services.meme_service import seed_sample_memes, migrate_legacy_memes
 
 # Create FastAPI app
 app = FastAPI(
@@ -12,6 +13,7 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    redirect_slashes=False,
 )
 
 # CORS middleware - allow frontend to make requests
@@ -28,6 +30,10 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     await connect_to_mongo()
+    # Seed sample memes on startup
+    await seed_sample_memes()
+    # Migrate legacy memes to use orderbook system
+    await migrate_legacy_memes()
 
 
 # Shutdown event - close MongoDB connection
@@ -53,6 +59,8 @@ async def health_check():
 
 # Include routers
 app.include_router(auth_router, prefix="/api")
+app.include_router(memes_router, prefix="/api")
+app.include_router(trading_router, prefix="/api")
 
 
 # For debugging - show all routes

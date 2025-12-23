@@ -1,8 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Play, Sparkles, TrendingUp, Users, Zap } from 'lucide-react';
 import './Hero.css';
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="hero">
       {/* Background Elements */}
@@ -36,13 +39,13 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="hero-cta">
-            <button className="btn btn-hero-primary">
+            <button className="btn btn-hero-primary" onClick={() => navigate('/feed')}>
               Start Trading Free
               <ArrowRight size={18} />
             </button>
-            <button className="btn btn-hero-secondary">
+            <button className="btn btn-hero-secondary" onClick={() => navigate('/feed')}>
               <Play size={18} />
-              Watch Demo
+              Browse Memes
             </button>
           </div>
 

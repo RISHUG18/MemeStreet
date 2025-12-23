@@ -1,0 +1,442 @@
+.meme-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.meme-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(124, 58, 237, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+              0 0 30px rgba(124, 58, 237, 0.1);
+}
+
+/* Image Container */
+.meme-image-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.meme-image-container.small {
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+  border-radius: 12px;
+}
+
+.meme-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.meme-card:hover .meme-image-container img {
+  transform: scale(1.05);
+}
+
+.image-skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.05) 25%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(255, 255, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.featured-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 0.4rem 0.8rem;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1a1a2e;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 20px;
+  z-index: 2;
+}
+
+.meme-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+}
+
+.trend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  text-transform: capitalize;
+  color: #e0e0e0;
+}
+
+.trend-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.trend-icon.hot { color: #ef4444; }
+.trend-icon.cold { color: #3b82f6; }
+.trend-icon.volatile { color: #f59e0b; }
+.trend-icon.stable { color: #22c55e; }
+
+/* Content */
+.meme-content {
+  padding: 1.25rem;
+}
+
+.meme-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.meme-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.meme-ticker {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #7c3aed;
+  text-transform: uppercase;
+}
+
+.meme-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.meme-category {
+  padding: 0.25rem 0.6rem;
+  background: rgba(124, 58, 237, 0.15);
+  color: #a78bfa;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 12px;
+  text-transform: capitalize;
+}
+
+/* Price */
+.meme-price {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+}
+
+.price-main {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.current-price {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.price-change {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.price-change.positive {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.price-change.negative {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.price-details {
+  display: flex;
+  gap: 1rem;
+  color: #808090;
+  font-size: 0.8rem;
+}
+
+/* Stats */
+.meme-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #a0a0b0;
+  font-size: 0.85rem;
+}
+
+.stat-item svg {
+  color: #606070;
+}
+
+/* User Position */
+.user-position {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  color: #a78bfa;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Actions */
+.meme-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.vote-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.vote-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #808090;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vote-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
+}
+
+.vote-btn.upvote.active {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.vote-btn.downvote.active {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.trade-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.trade-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.trade-btn.buy {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+}
+
+.trade-btn.buy:hover {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+}
+
+.trade-btn.sell {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.trade-btn.sell:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+/* List View Styles */
+.meme-card.list-view {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 1.5rem;
+}
+
+.meme-card.list-view .meme-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.meme-card.list-view .meme-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.meme-card.list-view .meme-name {
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meme-card.list-view .meme-category {
+  padding: 0;
+  background: none;
+  font-size: 0.8rem;
+  color: #808090;
+}
+
+.meme-price-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  min-width: 100px;
+}
+
+.meme-price-section .current-price {
+  font-size: 1.1rem;
+}
+
+.meme-stats-row {
+  display: flex;
+  gap: 1rem;
+  min-width: 150px;
+}
+
+.meme-stats-row .stat {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #808090;
+  font-size: 0.8rem;
+}
+
+.meme-actions-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.meme-actions-row .action-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #808090;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.meme-actions-row .action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.meme-actions-row .action-btn.upvote.active {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.meme-actions-row .action-btn.downvote.active {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.meme-actions-row .trade-btn {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .meme-card.list-view {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .meme-card.list-view .meme-info {
+    flex: 1 1 100%;
+    order: 1;
+  }
+
+  .meme-card.list-view .meme-image-container {
+    order: 0;
+  }
+
+  .meme-price-section {
+    order: 2;
+  }
+
+  .meme-stats-row {
+    order: 3;
+    flex: 1;
+  }
+
+  .meme-actions-row {
+    order: 4;
+  }
+}

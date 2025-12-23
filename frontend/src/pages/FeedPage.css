@@ -1,0 +1,506 @@
+/* =========================================
+   1. Page Layout & Background
+   ========================================= */
+.feed-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f0f1a 100%);
+  padding: 2rem;
+  padding-top: 100px;
+}
+
+/* =========================================
+   2. Header Section
+   ========================================= */
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
+
+.feed-title h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed, #f472b6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.25rem;
+}
+
+.feed-title p {
+  color: #a0a0b0;
+  font-size: 1rem;
+}
+
+.feed-stats {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+.stat-icon.hot {
+  color: #f472b6;
+}
+
+/* =========================================
+   3. Filters & Search Bar
+   ========================================= */
+.filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.search-box:focus-within {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+}
+
+.search-box svg {
+  color: #a0a0b0;
+}
+
+.search-box input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.search-box input::placeholder {
+  color: #606070;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.filter-select {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.filter-select svg {
+  color: #a0a0b0;
+}
+
+.filter-select select {
+  appearance: none;
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  padding-right: 1.5rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.filter-select select option {
+  background: #1a1a2e;
+  color: #e0e0e0;
+}
+
+.filter-select svg:last-child {
+  position: absolute;
+  right: 0.75rem;
+  pointer-events: none;
+}
+
+.sort-order-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #a0a0b0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sort-order-btn:hover {
+  background: rgba(124, 58, 237, 0.2);
+  border-color: #7c3aed;
+  color: #7c3aed;
+}
+
+.sort-order-btn.desc svg {
+  color: #ef4444;
+}
+
+.sort-order-btn.asc svg {
+  color: #22c55e;
+}
+
+/* =========================================
+   4. View Toggles & Loading States
+   ========================================= */
+.view-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.view-toggle button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  color: #606070;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.view-toggle button:hover {
+  color: #a0a0b0;
+}
+
+.view-toggle button.active {
+  background: rgba(124, 58, 237, 0.2);
+  color: #7c3aed;
+}
+
+.refresh-btn {
+  margin-left: 0.5rem;
+}
+
+.refresh-btn.spinning svg,
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.error-message,
+.loading-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 16px;
+  color: #ef4444;
+}
+
+.error-message button {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.loading-state {
+  color: #a0a0b0;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(124, 58, 237, 0.2);
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.empty-state {
+  color: #606070;
+}
+
+.empty-state svg {
+  margin-bottom: 1rem;
+  color: #7c3aed;
+}
+
+.empty-state h3 {
+  font-size: 1.25rem;
+  color: #a0a0b0;
+  margin-bottom: 0.5rem;
+}
+
+/* =========================================
+   5. Grid Container (FIXED)
+   ========================================= */
+.memes-container {
+  display: grid;
+  gap: 1.5rem;
+  width: 100%;
+  /* Ensures rows grow to fit content */
+  grid-auto-rows: auto;
+  /* Aligns items to the top to prevent stretching distortion */
+  align-items: start;
+}
+
+/* Safety: Forces cards to be relative and fit the grid */
+.memes-container > * {
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+.memes-container.grid {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.memes-container.list {
+  grid-template-columns: 1fr;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* =========================================
+   6. Card Component (FIXED OVERLAP)
+   ========================================= */
+/* Important: Apply class "meme-card" to your card wrapper div */
+.meme-card {
+  display: flex;
+  flex-direction: column; /* Stacks Image -> Content -> Footer vertically */
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%; /* Ensures cards in the same row are equal height */
+}
+
+.meme-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+/* Image Container */
+.card-image-wrapper {
+  position: relative;
+  width: 100%;
+  /* Creates a square aspect ratio for the image */
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  flex-shrink: 0; /* Prevents image from shrinking */
+}
+
+.card-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Content Container (Title, Price, etc.) */
+.card-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex-grow: 1; /* Pushes the footer to the bottom */
+}
+
+.card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.card-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Stats Row */
+.card-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.75rem;
+  border-radius: 12px;
+}
+
+.stat-group label {
+  display: block;
+  font-size: 0.75rem;
+  color: #a0a0b0;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  display: block;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+/* Actions/Buttons Footer */
+.card-actions {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.btn-buy, .btn-sell {
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-buy {
+  background: #22c55e;
+  color: white;
+}
+
+.btn-sell {
+  background: #ef4444;
+  color: white;
+}
+
+/* =========================================
+   7. Pagination
+   ========================================= */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+.pagination button {
+  padding: 0.75rem 1.5rem;
+  background: rgba(124, 58, 237, 0.2);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-radius: 10px;
+  color: #7c3aed;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: #7c3aed;
+  color: white;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-info {
+  color: #a0a0b0;
+  font-size: 0.9rem;
+}
+
+/* =========================================
+   8. Responsive Design
+   ========================================= */
+@media (max-width: 768px) {
+  .feed-page {
+    padding: 1rem;
+    padding-top: 80px;
+  }
+
+  .feed-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .feed-title h1 {
+    font-size: 2rem;
+  }
+
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }                                                                                                                         
+
+  .search-box {
+    min-width: 100%;
+  }
+
+  .filter-group {
+    flex-wrap: wrap;
+  }
+
+  .memes-container.grid {
+    grid-template-columns: 1fr;
+  }
+}                                                               

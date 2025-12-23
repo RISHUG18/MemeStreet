@@ -118,3 +118,28 @@ async def get_current_user_id(
         )
     
     return user_id
+
+
+# Optional Bearer scheme for endpoints that work with or without auth
+optional_security = HTTPBearer(auto_error=False)
+
+
+async def get_optional_user_id(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(optional_security)
+) -> Optional[str]:
+    """
+    Dependency to optionally extract user ID from JWT token.
+    Returns None if no token provided or token is invalid.
+    
+    Use this for endpoints that have different behavior for logged in vs anonymous users.
+    """
+    if credentials is None:
+        return None
+    
+    token = credentials.credentials
+    payload = decode_access_token(token)
+    
+    if payload is None:
+        return None
+    
+    return payload.get("sub")

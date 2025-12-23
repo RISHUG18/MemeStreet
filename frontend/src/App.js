@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LandingPage from './pages/LandingPage';
 import AuthPage from './pages/AuthPage';
+import FeedPage from './pages/FeedPage';
+import PortfolioPage from './pages/PortfolioPage';
+import Navbar from './components/Navbar/Navbar';
 import './App.css';
 
 // Protected Route Component
@@ -37,27 +40,38 @@ const Dashboard = () => {
 
 function AppRoutes() {
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<AuthPage />} />
-      <Route path="/signup" element={<AuthPage />} />
-      <Route 
-        path="/dashboard" 
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/portfolio" 
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } 
-      />
-    </Routes>
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<AuthPage />} />
+        <Route path="/signup" element={<AuthPage />} />
+        <Route 
+          path="/feed" 
+          element={
+            <ProtectedRoute>
+              <FeedPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/portfolio" 
+          element={
+            <ProtectedRoute>
+              <PortfolioPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard" 
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } 
+        />
+      </Routes>
+    </>
   );
 }
 

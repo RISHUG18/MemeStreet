@@ -102,10 +102,23 @@ export const memeService = {
     return response.data;
   },
 
+  getMemeByTicker: async (ticker) => {
+    const response = await api.get(`/memes/ticker/${ticker}`);
+    return response.data;
+  },
+
   getTrendingMemes: async (limit = 10) => {
-    const response = await api.get('/memes', { 
-      params: { sort_by: 'trending', limit } 
-    });
+    const response = await api.get('/memes/trending');
+    return response.data;
+  },
+
+  getFeaturedMemes: async () => {
+    const response = await api.get('/memes/featured');
+    return response.data;
+  },
+
+  getCategories: async () => {
+    const response = await api.get('/memes/categories');
     return response.data;
   },
 
@@ -119,43 +132,68 @@ export const memeService = {
     return response.data;
   },
 
+  downvoteMeme: async (id) => {
+    const response = await api.post(`/memes/${id}/downvote`);
+    return response.data;
+  },
+
+  reportMeme: async (id) => {
+    const response = await api.post(`/memes/${id}/report`);
+    return response.data;
+  },
+
   commentOnMeme: async (id, content) => {
-    const response = await api.post(`/memes/${id}/comments`, { content });
+    const response = await api.post(`/memes/${id}/comment?content=${encodeURIComponent(content)}`);
+    return response.data;
+  },
+
+  getComments: async (id, page = 1, perPage = 20) => {
+    const response = await api.get(`/memes/${id}/comments`, { params: { page, per_page: perPage } });
     return response.data;
   }
 };
 
-// ============ TRANSACTION SERVICES ============
-export const transactionService = {
-  buyMeme: async (memeId, quantity) => {
-    const response = await api.post('/transactions/buy', { 
-      meme_id: memeId, 
-      quantity 
-    });
+// ============ TRADING SERVICES ============
+export const tradingService = {
+  buyShares: async (memeId, quantity, maxPrice) => {
+    const maxPricePart = (maxPrice !== undefined && maxPrice !== null)
+      ? `&max_price=${encodeURIComponent(maxPrice)}`
+      : '';
+    const response = await api.post(`/trading/buy?meme_id=${memeId}&quantity=${quantity}${maxPricePart}`);
     return response.data;
   },
 
-  sellMeme: async (memeId, quantity) => {
-    const response = await api.post('/transactions/sell', { 
-      meme_id: memeId, 
-      quantity 
-    });
+  sellShares: async (memeId, quantity, minPrice) => {
+    const minPricePart = (minPrice !== undefined && minPrice !== null)
+      ? `&min_price=${encodeURIComponent(minPrice)}`
+      : '';
+    const response = await api.post(`/trading/sell?meme_id=${memeId}&quantity=${quantity}${minPricePart}`);
     return response.data;
   },
 
   getTransactionHistory: async (params = {}) => {
-    const response = await api.get('/transactions', { params });
+    const response = await api.get('/trading/history', { params });
+    return response.data;
+  },
+
+  getPortfolio: async () => {
+    const response = await api.get('/trading/portfolio');
+    return response.data;
+  },
+
+  cancelOrder: async (orderId) => {
+    const response = await api.post(`/trading/orders/${orderId}/cancel`);
+    return response.data;
+  },
+
+  getBalance: async () => {
+    const response = await api.get('/trading/balance');
     return response.data;
   }
 };
 
 // ============ USER SERVICES ============
 export const userService = {
-  getPortfolio: async () => {
-    const response = await api.get('/users/portfolio');
-    return response.data;
-  },
-
   getLeaderboard: async (limit = 10) => {
     const response = await api.get('/users/leaderboard', { 
       params: { limit } 

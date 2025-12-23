@@ -10,6 +10,11 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
 
+  const walletBalance = (() => {
+    const n = Number(user?.wallet_balance);
+    return Number.isFinite(n) ? n : null;
+  })();
+
   const handleLogout = () => {
     logout();
     setIsUserMenuOpen(false);
@@ -27,6 +32,10 @@ const Navbar = () => {
         </Link>
 
         <div className={`navbar-links ${isMenuOpen ? 'active' : ''}`}>
+          <Link to="/feed" className="nav-link nav-link-primary">Trade Memes</Link>
+          {isAuthenticated && (
+            <Link to="/portfolio" className="nav-link">Portfolio</Link>
+          )}
           <a href="/#features" className="nav-link">Features</a>
           <a href="/#how-it-works" className="nav-link">How It Works</a>
           <a href="/#trending" className="nav-link">Trending</a>
@@ -39,7 +48,7 @@ const Navbar = () => {
             <div className="wallet-display">
               <Wallet size={16} />
               <span className="wallet-balance">
-                {user?.wallet_balance?.toFixed(2) || '100.00'}
+                {walletBalance !== null ? walletBalance.toFixed(2) : '0.00'}
               </span>
               <span className="wallet-label">coins</span>
             </div>

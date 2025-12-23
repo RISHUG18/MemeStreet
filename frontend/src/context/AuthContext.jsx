@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { authService } from '../services/api';
 
 const AuthContext = createContext(null);
@@ -82,12 +82,27 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  const updateUser = (userData) => {
-    setUser(userData);
-    localStorage.setItem('memestreet_user', JSON.stringify(userData));
-  };
+  // Update cached user without forcing consumers to re-create callbacks.
+  // Supports either a partial object OR a functional updater.
+  const updateUser = useCallback((update) => {
+    setUser((prev) => {
+      const next = typeof update === 'function'
+        ? update(prev)
+        : (prev ? { ...prev, ...update } : update);
 
-  const value = {
+      if (next) {
+        localStorage.setItem('memestreet_user', JSON.stringify(next));
+      } else {
+        localStorage.removeItem('memestreet_user');
+      }
+
+      return next;
+    });
+  }, []);
+
+  const clearError = useCallback(() => setError(null), []);
+
+  const value = useMemo(() => ({
     user,
     isLoading,
     error,
@@ -96,8 +111,8 @@ export const AuthProvider = ({ children }) => {
     signup,
     logout,
     updateUser,
-    clearError: () => setError(null)
-  };
+    clearError,
+  }), [user, isLoading, error, login, signup, logout, updateUser, clearError]);
 
   return (
     <AuthContext.Provider value={value}>
