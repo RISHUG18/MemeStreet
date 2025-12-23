@@ -1,3 +1,227 @@
+/* =========================================
+   Instagram-Style Meme Card
+   ========================================= */
+.meme-card.instagram-view {
+  background: white;
+  border: 1px solid #dbdbdb;
+  border-radius: 3px;
+  margin-bottom: 24px;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.meme-card.instagram-view:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: #dbdbdb;
+}
+
+.instagram-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+}
+
+.instagram-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.username {
+  font-weight: 600;
+  font-size: 0.95em;
+  color: #262626;
+}
+
+.meme-category-badge {
+  background: #fafafa;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  color: #8e8e8e;
+  font-weight: 500;
+}
+
+.instagram-image-container {
+  width: 100%;
+  min-height: 400px;
+  background: #fafafa;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instagram-image-container img {
+  width: 100%;
+  height: auto;
+  max-height: 700px;
+  display: block;
+  object-fit: contain;
+  transition: opacity 0.3s;
+}
+
+.instagram-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+}
+
+.action-buttons-left {
+  display: flex;
+  gap: 16px;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: #262626;
+  transition: all 0.2s;
+  border-radius: 50%;
+}
+
+.action-btn:hover {
+  background: #fafafa;
+}
+
+.action-btn.active.upvoted {
+  color: #10b981;
+}
+
+.action-btn.active.downvoted {
+  color: #ef4444;
+}
+
+.ticker-display {
+  font-weight: 700;
+  color: #667eea;
+  font-size: 1.1em;
+}
+
+.instagram-likes {
+  padding: 0 16px 8px;
+  font-size: 0.9em;
+  color: #262626;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.likes-count {
+  font-weight: 600;
+}
+
+.separator {
+  color: #8e8e8e;
+}
+
+.downvotes-count {
+  color: #8e8e8e;
+}
+
+.instagram-caption {
+  padding: 0 16px 10px;
+  font-size: 0.95em;
+  color: #262626;
+  line-height: 1.5;
+}
+
+.caption-username {
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.caption-text {
+  color: #262626;
+}
+
+.instagram-price {
+  padding: 0 16px 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.price-current {
+  font-size: 1.2em;
+  font-weight: 700;
+  color: #262626;
+}
+
+.price-change-inline {
+  font-size: 0.9em;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.price-change-inline.positive {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.price-change-inline.negative {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.market-cap {
+  font-size: 0.85em;
+  color: #8e8e8e;
+}
+
+.instagram-trade-btn {
+  width: calc(100% - 32px);
+  margin: 0 16px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.instagram-trade-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* =========================================
+   Original Styles (Grid/List View)
+   ========================================= */
 .meme-card {
   background: rgba(255, 255, 255, 0.03);
   border-radius: 20px;
@@ -5,9 +229,10 @@
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
 }
 
-.meme-card:hover {
+.meme-card:not(.instagram-view):hover {
   transform: translateY(-4px);
   border-color: rgba(124, 58, 237, 0.3);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
@@ -413,6 +638,19 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .meme-card.instagram-view {
+    max-width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .meme-card.instagram-view .instagram-image-container {
+    min-height: 250px;
+  }
+
+  .meme-card.instagram-view .instagram-image-container img {
+    max-height: 450px;
+  }
+
   .meme-card.list-view {
     flex-wrap: wrap;
     gap: 1rem;
@@ -438,5 +676,12 @@
 
   .meme-actions-row {
     order: 4;
+  }
+}
+
+/* Tablet responsive */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .meme-card.instagram-view {
+    max-width: 600px;
   }
 }

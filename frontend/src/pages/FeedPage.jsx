@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { 
-  TrendingUp, TrendingDown, Search, Filter, Grid, List,
-  Flame, Sparkles, RefreshCw, ChevronDown
-} from 'lucide-react';
+import { Search, Filter, Loader } from 'lucide-react';
 import { memeService } from '../services/api';
 import MemeCard from '../components/MemeCard';
 import TradeModal from '../components/TradeModal';
@@ -24,12 +21,12 @@ const CATEGORIES = [
 ];
 
 const SORT_OPTIONS = [
+  { value: 'newest', label: 'Newest' },
+  { value: 'upvotes', label: 'Most Upvoted' },
   { value: 'market_cap', label: 'Market Cap' },
   { value: 'price', label: 'Price' },
   { value: 'volume', label: '24h Volume' },
   { value: 'change', label: '24h Change' },
-  { value: 'upvotes', label: 'Most Upvoted' },
-  { value: 'newest', label: 'Newest' },
 ];
 
 function FeedPage() {
@@ -37,20 +34,28 @@ function FeedPage() {
   
   // State
   const [memes, setMemes] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+  const [hasMore, setHasMore] = useState(true);
   
   // Filters
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [category, setCategory] = useState(searchParams.get('category') || '');
-  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'market_cap');
-  const [sortOrder, setSortOrder] = useState(searchParams.get('order') || 'desc');
+  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'newest');
   
-  // Pagination
+  // Infinite scroll
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
+  const observer = useRef();
+  const lastMemeRef = useCallback(node => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPage(prevPage => prevPage + 1);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [loading, hasMore]);
   
   // Trade modal
   const [selectedMeme, setSelectedMeme] = useState(null);
@@ -58,25 +63,33 @@ function FeedPage() {
   const [tradeType, setTradeType] = useState('buy');
 
   // Fetch memes
-  const fetchMemes = async () => {
+  const fetchMemes = async (resetPage = false) => {
+    if (!hasMore && !resetPage) return;
+    
     setLoading(true);
     setError(null);
     
     try {
       const params = {
-        page,
-        per_page: 12,
+        page: resetPage ? 1 : page,
+        per_page: 10,
         sort_by: sortBy,
-        sort_order: sortOrder,
+        sort_order: 'desc',
       };
       
       if (category) params.category = category;
       if (searchQuery) params.search = searchQuery;
       
       const data = await memeService.getMemes(params);
-      setMemes(data.memes);
-      setTotalPages(data.total_pages);
-      setTotal(data.total);
+      
+      if (resetPage) {
+        setMemes(data.memes);
+        setPage(1);
+      } else {
+        setMemes(prevMemes => [...prevMemes, ...data.memes]);
+      }
+      
+      setHasMore(data.memes.length === 10);
     } catch (err) {
       console.error('Error fetching memes:', err);
       setError('Failed to load memes. Please try again.');
@@ -85,28 +98,36 @@ function FeedPage() {
     }
   };
 
-  // Initial fetch and refetch on filter change
+  // Fetch more memes when page changes
   useEffect(() => {
-    fetchMemes();
+    if (page > 1) {
+      fetchMemes();
+    }
+  }, [page]);
+
+  // Reset and fetch on filter change
+  useEffect(() => {
+    setMemes([]);
+    setPage(1);
+    setHasMore(true);
+    fetchMemes(true);
     
     // Update URL params
     const params = new URLSearchParams();
     if (searchQuery) params.set('search', searchQuery);
     if (category) params.set('category', category);
-    if (sortBy !== 'market_cap') params.set('sort', sortBy);
-    if (sortOrder !== 'desc') params.set('order', sortOrder);
+    if (sortBy !== 'newest') params.set('sort', sortBy);
     setSearchParams(params);
-  }, [page, category, sortBy, sortOrder]);
+  }, [category, sortBy]);
 
   // Debounced search
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (page === 1) {
-        fetchMemes();
-      } else {
-        setPage(1); // Reset to page 1 on new search
-      }
-    }, 300);
+      setMemes([]);
+      setPage(1);
+      setHasMore(true);
+      fetchMemes(true);
+    }, 500);
     
     return () => clearTimeout(timer);
   }, [searchQuery]);
@@ -126,10 +147,8 @@ function FeedPage() {
         let nextDownvotes = m.downvotes;
 
         if (wasUpvoted) {
-          // toggled off
           nextUpvotes = Math.max(0, nextUpvotes - 1);
         } else {
-          // added (possibly switching from downvote)
           nextUpvotes = nextUpvotes + 1;
           if (wasDownvoted) nextDownvotes = Math.max(0, nextDownvotes - 1);
         }
@@ -162,10 +181,8 @@ function FeedPage() {
         let nextUpvotes = m.upvotes;
 
         if (wasDownvoted) {
-          // toggled off
           nextDownvotes = Math.max(0, nextDownvotes - 1);
         } else {
-          // added (possibly switching from upvote)
           nextDownvotes = nextDownvotes + 1;
           if (wasUpvoted) nextUpvotes = Math.max(0, nextUpvotes - 1);
         }
@@ -184,166 +201,115 @@ function FeedPage() {
     }
   };
 
-  const handleTrade = (meme, type) => {
+  const handleMemeClick = (meme) => {
     setSelectedMeme(meme);
-    setTradeType(type);
+    setTradeType('buy');
     setTradeModalOpen(true);
   };
 
   const handleTradeComplete = (updatedMeme) => {
-    // Refresh memes after trade
-    fetchMemes();
+    setMemes(prevMemes => prevMemes.map(m => 
+      m.id === updatedMeme?.id ? { ...m, ...updatedMeme } : m
+    ));
     setTradeModalOpen(false);
   };
 
   return (
-    <div className="feed-page">
-      {/* Header */}
-      <div className="feed-header">
-        <div className="feed-title">
-          <h1>Meme Market</h1>
-          <p>Trade the internet's hottest memes 📈</p>
-        </div>
+    <div className="feed-page instagram-style">
+      {/* Sticky Header */}
+      <div className="feed-sticky-header">
+        <h1 className="feed-logo">MemeStreet</h1>
         
-        <div className="feed-stats">
-          <div className="stat-item">
-            <Flame className="stat-icon hot" />
-            <span>{total} Active Memes</span>
+        <div className="header-filters">
+          <div className="search-box-small">
+            <Search size={18} />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
-        </div>
-      </div>
 
-      {/* Filters Bar */}
-      <div className="filters-bar">
-        <div className="search-box">
-          <Search size={18} />
-          <input
-            type="text"
-            placeholder="Search memes by name or ticker..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-
-        <div className="filter-group">
-          <div className="filter-select">
+          <div className="filter-select-small">
             <Filter size={16} />
             <select 
               value={category} 
-              onChange={(e) => { setCategory(e.target.value); setPage(1); }}
+              onChange={(e) => setCategory(e.target.value)}
             >
               {CATEGORIES.map(cat => (
                 <option key={cat.value} value={cat.value}>{cat.label}</option>
               ))}
             </select>
-            <ChevronDown size={16} />
           </div>
 
-          <div className="filter-select">
+          <div className="filter-select-small">
             <select 
               value={sortBy} 
-              onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
+              onChange={(e) => setSortBy(e.target.value)}
             >
               {SORT_OPTIONS.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
             </select>
-            <ChevronDown size={16} />
           </div>
-
-          <button 
-            className={`sort-order-btn ${sortOrder}`}
-            onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
-            title={sortOrder === 'desc' ? 'Descending' : 'Ascending'}
-          >
-            {sortOrder === 'desc' ? <TrendingDown size={18} /> : <TrendingUp size={18} />}
-          </button>
-        </div>
-
-        <div className="view-toggle">
-          <button 
-            className={viewMode === 'grid' ? 'active' : ''} 
-            onClick={() => setViewMode('grid')}
-          >
-            <Grid size={18} />
-          </button>
-          <button 
-            className={viewMode === 'list' ? 'active' : ''} 
-            onClick={() => setViewMode('list')}
-          >
-            <List size={18} />
-          </button>
-          <button className="refresh-btn" onClick={fetchMemes} disabled={loading}>
-            <RefreshCw size={18} className={loading ? 'spinning' : ''} />
-          </button>
         </div>
       </div>
 
-      {/* Error Message */}
-      {error && (
-        <div className="error-message">
-          <p>{error}</p>
-          <button onClick={fetchMemes}>Try Again</button>
-        </div>
-      )}
+      {/* Scrollable Feed */}
+      <div className="instagram-feed">
+        {error && (
+          <div className="error-banner">
+            {error}
+          </div>
+        )}
 
-      {/* Loading State */}
-      {loading && (
-        <div className="loading-state">
-          <div className="loader"></div>
-          <p>Loading memes...</p>
-        </div>
-      )}
-
-      {/* Meme Grid/List */}
-      {!loading && !error && (
-        <>
-          {memes.length === 0 ? (
-            <div className="empty-state">
-              <Sparkles size={48} />
-              <h3>No memes found</h3>
-              <p>Try adjusting your filters or search query</p>
-            </div>
-          ) : (
-            <div className={`memes-container ${viewMode}`}>
-              {memes.map(meme => (
+        {memes.map((meme, index) => {
+          if (memes.length === index + 1) {
+            return (
+              <div key={meme.id} ref={lastMemeRef}>
                 <MemeCard
-                  key={meme.id}
                   meme={meme}
-                  viewMode={viewMode}
-                  onUpvote={() => handleUpvote(meme.id)}
-                  onDownvote={() => handleDownvote(meme.id)}
-                  onBuy={() => handleTrade(meme, 'buy')}
-                  onSell={() => handleTrade(meme, 'sell')}
+                  viewMode="instagram"
+                  onUpvote={handleUpvote}
+                  onDownvote={handleDownvote}
+                  onMemeClick={handleMemeClick}
                 />
-              ))}
-            </div>
-          )}
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="pagination">
-              <button 
-                disabled={page === 1}
-                onClick={() => setPage(p => p - 1)}
-              >
-                Previous
-              </button>
-              
-              <div className="page-info">
-                Page {page} of {totalPages}
               </div>
-              
-              <button 
-                disabled={page === totalPages}
-                onClick={() => setPage(p => p + 1)}
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </>
-      )}
+            );
+          } else {
+            return (
+              <MemeCard
+                key={meme.id}
+                meme={meme}
+                viewMode="instagram"
+                onUpvote={handleUpvote}
+                onDownvote={handleDownvote}
+                onMemeClick={handleMemeClick}
+              />
+            );
+          }
+        })}
+
+        {loading && (
+          <div className="loading-indicator">
+            <Loader className="spinner" size={32} />
+            <p>Loading memes...</p>
+          </div>
+        )}
+
+        {!loading && memes.length === 0 && (
+          <div className="empty-feed">
+            <p>No memes found. Try adjusting your filters.</p>
+          </div>
+        )}
+
+        {!hasMore && memes.length > 0 && (
+          <div className="end-of-feed">
+            <p>You've reached the end! 🎉</p>
+          </div>
+        )}
+      </div>
 
       {/* Trade Modal */}
       {tradeModalOpen && selectedMeme && (

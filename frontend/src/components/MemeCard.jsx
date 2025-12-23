@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   TrendingUp, TrendingDown, ThumbsUp, ThumbsDown, 
   MessageCircle, Flag, Share2, ShoppingCart, DollarSign,
-  Flame, Snowflake, Zap, Activity
+  Flame, Snowflake, Zap, Activity, Users
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './MemeCard.css';
@@ -29,7 +29,7 @@ const formatPrice = (price) => {
   return '$' + price.toFixed(4);
 };
 
-function MemeCard({ meme, viewMode, onUpvote, onDownvote, onBuy, onSell }) {
+function MemeCard({ meme, viewMode, onUpvote, onDownvote, onBuy, onSell, onMemeClick }) {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -46,18 +46,114 @@ function MemeCard({ meme, viewMode, onUpvote, onDownvote, onBuy, onSell }) {
   const handleCardClick = (e) => {
     // Don't navigate if clicking on buttons
     if (e.target.closest('button')) return;
-    navigate(`/meme/${meme.id}`);
+    if (viewMode === 'instagram' && onMemeClick) {
+      onMemeClick(meme);
+    } else {
+      navigate(`/meme/${meme.id}`);
+    }
   };
 
-  const handleAction = (action, e) => {
+  const handleAction = (action, e, passFullMeme = false) => {
     e.stopPropagation();
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
-    action();
+    if (passFullMeme) {
+      action(meme);
+    } else {
+      action(meme.id);
+    }
   };
 
+  // Instagram view - image-focused with like/dislike
+  if (viewMode === 'instagram') {
+    return (
+      <div className="meme-card instagram-view">
+        {/* Header */}
+        <div className="instagram-header">
+          <div className="instagram-user">
+            <div className="user-avatar">
+              <Users size={20} />
+            </div>
+            <span className="username">{meme.creator_username || 'Anonymous'}</span>
+          </div>
+          <span className="meme-category-badge">{meme.category}</span>
+        </div>
+
+        {/* Image - Main Content */}
+        <div className="instagram-image-container" onClick={handleCardClick}>
+          {!imageLoaded && !imageError && <div className="image-skeleton"></div>}
+          <img 
+            src={imageError ? '/placeholder-meme.png' : meme.image_url} 
+            alt={meme.name}
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setImageError(true)}
+            style={{ opacity: imageLoaded ? 1 : 0 }}
+          />
+        </div>
+
+        {/* Actions Bar */}
+        <div className="instagram-actions">
+          <div className="action-buttons-left">
+            <button 
+              className={`action-btn ${meme.user_has_upvoted ? 'active upvoted' : ''}`}
+              onClick={(e) => handleAction(onUpvote, e)}
+              title="Upvote"
+            >
+              <ThumbsUp size={24} fill={meme.user_has_upvoted ? 'currentColor' : 'none'} />
+            </button>
+            <button 
+              className={`action-btn ${meme.user_has_downvoted ? 'active downvoted' : ''}`}
+              onClick={(e) => handleAction(onDownvote, e)}
+              title="Downvote"
+            >
+              <ThumbsDown size={24} fill={meme.user_has_downvoted ? 'currentColor' : 'none'} />
+            </button>
+            <button className="action-btn" title="Comments">
+              <MessageCircle size={24} />
+            </button>
+          </div>
+          <div className="ticker-display">
+            ${meme.ticker}
+          </div>
+        </div>
+
+        {/* Likes Count */}
+        <div className="instagram-likes">
+          <span className="likes-count">{formatNumber(meme.upvotes)} upvotes</span>
+          <span className="separator">•</span>
+          <span className="downvotes-count">{formatNumber(meme.downvotes)} downvotes</span>
+        </div>
+
+        {/* Caption */}
+        <div className="instagram-caption">
+          <span className="caption-username">{meme.name}</span>
+          <span className="caption-text">{meme.description}</span>
+        </div>
+
+        {/* Price Info */}
+        <div className="instagram-price">
+          <div className="price-current">{formatPrice(meme.current_price)}</div>
+          <div className={`price-change-inline ${isPositive ? 'positive' : 'negative'}`}>
+            {isPositive ? '↑' : '↓'} {Math.abs(priceChangePercent).toFixed(2)}%
+          </div>
+          <div className="market-cap">MCap: {formatPrice(meme.market_cap)}</div>
+        </div>
+
+        {/* Trade Button */}
+        <button 
+          className="instagram-trade-btn"
+          onClick={handleCardClick}
+        >
+          <ShoppingCart size={18} />
+          View Trading Options
+        </button>
+      </div>
+    );
+  }
+
+  // List view (keeping original functionality)
   if (viewMode === 'list') {
     return (
       <div className="meme-card list-view" onClick={handleCardClick}>
@@ -118,14 +214,14 @@ function MemeCard({ meme, viewMode, onUpvote, onDownvote, onBuy, onSell }) {
           </button>
           <button 
             className="trade-btn buy"
-            onClick={(e) => handleAction(onBuy, e)}
+            onClick={(e) => handleAction(onBuy, e, true)}
           >
             Buy
           </button>
           {meme.user_owns_shares > 0 && !isIpoActive && (
             <button 
               className="trade-btn sell"
-              onClick={(e) => handleAction(onSell, e)}
+              onClick={(e) => handleAction(onSell, e, true)}
             >
               Sell
             </button>
@@ -228,7 +324,7 @@ function MemeCard({ meme, viewMode, onUpvote, onDownvote, onBuy, onSell }) {
           <div className="trade-buttons">
             <button 
               className="trade-btn buy"
-              onClick={(e) => handleAction(onBuy, e)}
+              onClick={(e) => handleAction(onBuy, e, true)}
             >
               <DollarSign size={16} />
               Buy
@@ -236,7 +332,7 @@ function MemeCard({ meme, viewMode, onUpvote, onDownvote, onBuy, onSell }) {
             {meme.user_owns_shares > 0 && !isIpoActive && (
               <button 
                 className="trade-btn sell"
-                onClick={(e) => handleAction(onSell, e)}
+                onClick={(e) => handleAction(onSell, e, true)}
               >
                 Sell
               </button>

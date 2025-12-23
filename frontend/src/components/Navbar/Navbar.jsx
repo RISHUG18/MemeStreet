@@ -69,12 +69,12 @@ const Navbar = () => {
               {isUserMenuOpen && (
                 <div className="user-dropdown">
                   <Link 
-                    to="/dashboard" 
+                    to="/profile" 
                     className="dropdown-item"
                     onClick={() => setIsUserMenuOpen(false)}
                   >
                     <User size={16} />
-                    Dashboard
+                    My Profile
                   </Link>
                   <Link 
                     to="/portfolio" 

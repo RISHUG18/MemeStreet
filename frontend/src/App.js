@@ -5,6 +5,7 @@ import LandingPage from './pages/LandingPage';
 import AuthPage from './pages/AuthPage';
 import FeedPage from './pages/FeedPage';
 import PortfolioPage from './pages/PortfolioPage';
+import UserProfilePage from './pages/UserProfilePage';
 import Navbar from './components/Navbar/Navbar';
 import './App.css';
 
@@ -25,17 +26,6 @@ const ProtectedRoute = ({ children }) => {
   }
   
   return children;
-};
-
-// Placeholder Dashboard Component
-const Dashboard = () => {
-  const { user } = useAuth();
-  return (
-    <div className="dashboard-placeholder">
-      <h1>Welcome, {user?.username}! 🚀</h1>
-      <p>Dashboard coming soon...</p>
-    </div>
-  );
 };
 
 function AppRoutes() {
@@ -63,10 +53,18 @@ function AppRoutes() {
           } 
         />
         <Route 
-          path="/dashboard" 
+          path="/profile" 
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <UserProfilePage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/profile/:userId" 
+          element={
+            <ProtectedRoute>
+              <UserProfilePage />
             </ProtectedRoute>
           } 
         />
